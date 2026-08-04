@@ -1,0 +1,28 @@
+# AI session state — ephemeral, rewritten at every session start
+.session-plan.md
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Rust
+/target/
+**/*.rs.bk
+
+# Model weights, packed tensors, and evaluation data — large, regenerable
+/weights/
+/data/
+*.safetensors
+*.bin
+*.npz
+*.pt
+
+# Benchmark and figure output
+/outputs/
+*.svg.tmp
+
+# macOS
+.DS_Store
