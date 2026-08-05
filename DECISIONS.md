@@ -45,3 +45,23 @@ Newest last. One entry per decision:
 **Chose:** Write the winning candidate's inner loop twice — once as it would compile for stock RV32IM, once assuming the instruction exists — and count operations.
 **Over:** Building an RV32IM emulator to execute the design (15–25 hrs).
 **Because:** A specification that is never executed cannot be checked, and the emulator is the honest fix — but it does not fit in 13 days alongside everything else. Operation counting costs hours and converts every design claim from "this would help" into "this cuts the inner loop from N operations to M." The emulator remains the dated continuation, targeted 2026-09-13. This would be wrong if the counted loops diverge from what a real compiler emits, which is a real risk and the reason the counts get reported as counts rather than as a speedup.
+
+## 2026-08-05 — Exclude embeddings from the precision search, pin at INT8
+
+**Chose:** Keep `wte`/`wpe` out of the descent's search space and pin them at 8 bits; search only over the four transformer weight roles.
+**Over:** Including embeddings as a fifth searchable role, which was the original plan.
+**Because:** Measured on day 2, and the effect is not subtle. Per-role INT4 with everything else at fp32, on a 12-window WikiText-2 subset against an fp32 baseline of ppl 31.0807:
+
+| role | INT8 | INT4 | INT3 |
+|---|---|---|---|
+| attn_qkv | +0.04% | +3.38% | +19.62% |
+| attn_proj | -0.00% | +0.77% | +4.69% |
+| mlp_fc | +0.11% | +4.83% | +18.76% |
+| mlp_proj | -0.03% | +0.53% | +8.06% |
+| **embeddings** | +0.84% | **+4007.40%** | +1376149.37% |
+
+GPT-2 ties the token embedding to the LM head — `lm_head.weight` *is* `transformer.wte.weight` — so quantizing `wte` to 4 bits does not just coarsen a lookup table, it coarsens the output logit projection, and the model stops producing usable distributions. This matches production practice: GPTQ and AWQ do not quantize embeddings or the head. Keeping them searchable would spend descent steps rediscovering a known catastrophe.
+
+The four transformer roles behave as the literature describes (INT4 costing roughly 0.5–5%), which is also the evidence that the quantizer itself is correct — the INT8 oracle passes at +0.97% uniform and restoration is bit-exact.
+
+**What would make this wrong:** embeddings are 39.4M of ~124M parameters, so pinning them at INT8 puts a floor under total compression that a real deployment might not accept. If the mixed-precision claim ends up dominated by that floor, the honest move is to report the allocation over transformer weights separately from whole-model compression, rather than to quantize the head anyway.
