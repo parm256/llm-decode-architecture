@@ -1,0 +1,377 @@
+{
+  "fp32_ppl": 31.080724324269823,
+  "noise_floor_spread": 0.0,
+  "n_windows": 12,
+  "group_size": 128,
+  "fisher_scores": {
+    "attn_qkv": 0.00018213864072170384,
+    "attn_proj": 4.223842681637157e-05,
+    "mlp_fc": 0.0001369124941497163,
+    "mlp_proj": 8.198467242909807e-05
+  },
+  "descent_order": [
+    "attn_proj",
+    "mlp_proj",
+    "mlp_fc",
+    "attn_qkv"
+  ],
+  "uniform_int4": {
+    "ppl": 34.56228073201475,
+    "bytes": 45121536.0
+  },
+  "pareto": [
+    {
+      "bytes": 28311552.0,
+      "ppl": 1476.725341824216,
+      "alloc": {
+        "attn_qkv": 3,
+        "attn_proj": 4,
+        "mlp_fc": 2,
+        "mlp_proj": 2
+      }
+    },
+    {
+      "bytes": 30081024.0,
+      "ppl": 1454.9334500996952,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 3,
+        "mlp_fc": 2,
+        "mlp_proj": 2
+      }
+    },
+    {
+      "bytes": 30965760.0,
+      "ppl": 266.449436701727,
+      "alloc": {
+        "attn_qkv": 3,
+        "attn_proj": 3,
+        "mlp_fc": 3,
+        "mlp_proj": 2
+      }
+    },
+    {
+      "bytes": 31850496.0,
+      "ppl": 231.98524966474602,
+      "alloc": {
+        "attn_qkv": 3,
+        "attn_proj": 4,
+        "mlp_fc": 3,
+        "mlp_proj": 2
+      }
+    },
+    {
+      "bytes": 32735232.0,
+      "ppl": 222.92077578661946,
+      "alloc": {
+        "attn_qkv": 3,
+        "attn_proj": 5,
+        "mlp_fc": 3,
+        "mlp_proj": 2
+      }
+    },
+    {
+      "bytes": 33619968.0,
+      "ppl": 165.96059228556433,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 3,
+        "mlp_fc": 3,
+        "mlp_proj": 2
+      }
+    },
+    {
+      "bytes": 34504704.0,
+      "ppl": 67.99882791626523,
+      "alloc": {
+        "attn_qkv": 3,
+        "attn_proj": 3,
+        "mlp_fc": 3,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "bytes": 35389440.0,
+      "ppl": 63.28508174482737,
+      "alloc": {
+        "attn_qkv": 3,
+        "attn_proj": 4,
+        "mlp_fc": 3,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "bytes": 36274176.0,
+      "ppl": 61.72900135004443,
+      "alloc": {
+        "attn_qkv": 3,
+        "attn_proj": 5,
+        "mlp_fc": 3,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "bytes": 37158912.0,
+      "ppl": 48.4954550959395,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 3,
+        "mlp_fc": 3,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "bytes": 38043648.0,
+      "ppl": 45.78872263094122,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 4,
+        "mlp_fc": 3,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "bytes": 38928384.0,
+      "ppl": 45.129930593479294,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 5,
+        "mlp_fc": 3,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "bytes": 39813120.0,
+      "ppl": 44.61956385494797,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 6,
+        "mlp_fc": 3,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "bytes": 40697856.0,
+      "ppl": 39.46232401720884,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 3,
+        "mlp_fc": 4,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "bytes": 41582592.0,
+      "ppl": 37.64648282847248,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 4,
+        "mlp_fc": 4,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "bytes": 42467328.0,
+      "ppl": 37.25094342558232,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 5,
+        "mlp_fc": 4,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "bytes": 43352064.0,
+      "ppl": 37.19915697117268,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 6,
+        "mlp_fc": 4,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "bytes": 44236800.0,
+      "ppl": 36.34196495547527,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 3,
+        "mlp_fc": 4,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 45121536.0,
+      "ppl": 34.56228073201475,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 4,
+        "mlp_fc": 4,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 46006272.0,
+      "ppl": 34.349454763053366,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 5,
+        "mlp_fc": 4,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 46891008.0,
+      "ppl": 34.267029104437604,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 6,
+        "mlp_fc": 4,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 47775744.0,
+      "ppl": 33.88373185687659,
+      "alloc": {
+        "attn_qkv": 5,
+        "attn_proj": 4,
+        "mlp_fc": 4,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 48660480.0,
+      "ppl": 33.16444057581808,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 4,
+        "mlp_fc": 5,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 49545216.0,
+      "ppl": 32.928621295488114,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 5,
+        "mlp_fc": 5,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 50429952.0,
+      "ppl": 32.87923695497412,
+      "alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 6,
+        "mlp_fc": 5,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 51314688.0,
+      "ppl": 32.546178436571196,
+      "alloc": {
+        "attn_qkv": 5,
+        "attn_proj": 4,
+        "mlp_fc": 5,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 52199424.0,
+      "ppl": 32.340952731114236,
+      "alloc": {
+        "attn_qkv": 5,
+        "attn_proj": 5,
+        "mlp_fc": 5,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 53084160.0,
+      "ppl": 32.30633038627337,
+      "alloc": {
+        "attn_qkv": 5,
+        "attn_proj": 6,
+        "mlp_fc": 5,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 53968896.0,
+      "ppl": 32.061809698548544,
+      "alloc": {
+        "attn_qkv": 6,
+        "attn_proj": 4,
+        "mlp_fc": 5,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 54853632.0,
+      "ppl": 31.871711118273808,
+      "alloc": {
+        "attn_qkv": 6,
+        "attn_proj": 5,
+        "mlp_fc": 5,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 55738368.0,
+      "ppl": 31.8410735280257,
+      "alloc": {
+        "attn_qkv": 6,
+        "attn_proj": 6,
+        "mlp_fc": 5,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 57507840.0,
+      "ppl": 31.80834883397153,
+      "alloc": {
+        "attn_qkv": 6,
+        "attn_proj": 8,
+        "mlp_fc": 5,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 58392576.0,
+      "ppl": 31.722077569522078,
+      "alloc": {
+        "attn_qkv": 6,
+        "attn_proj": 5,
+        "mlp_fc": 6,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "bytes": 61046784.0,
+      "ppl": 31.704180055019794,
+      "alloc": {
+        "attn_qkv": 8,
+        "attn_proj": 6,
+        "mlp_fc": 5,
+        "mlp_proj": 4
+      }
+    }
+  ],
+  "n_evals": 140,
+  "headline": {
+    "bytes": 45121536.0,
+    "ppl": 34.56228073201475,
+    "alloc": {
+      "attn_qkv": 4,
+      "attn_proj": 4,
+      "mlp_fc": 4,
+      "mlp_proj": 4
+    },
+    "byte_saving_pct": 0.0,
+    "ppl_delta_vs_int4_pct": 0.0
+  }
+}

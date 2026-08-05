@@ -1,0 +1,101 @@
+{
+  "rows": [
+    {
+      "budget_ppl": 36,
+      "uniform_bytes": 45121536.0,
+      "mixed_bytes": 45121536.0,
+      "saving_pct": 0.0,
+      "mixed_alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 4,
+        "mlp_fc": 4,
+        "mlp_proj": 4
+      }
+    },
+    {
+      "budget_ppl": 40,
+      "uniform_bytes": 45121536.0,
+      "mixed_bytes": 40697856.0,
+      "saving_pct": 9.80392156862745,
+      "mixed_alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 3,
+        "mlp_fc": 4,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "budget_ppl": 45,
+      "uniform_bytes": 45121536.0,
+      "mixed_bytes": 39813120.0,
+      "saving_pct": 11.764705882352944,
+      "mixed_alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 6,
+        "mlp_fc": 3,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "budget_ppl": 50,
+      "uniform_bytes": 45121536.0,
+      "mixed_bytes": 37158912.0,
+      "saving_pct": 17.647058823529417,
+      "mixed_alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 3,
+        "mlp_fc": 3,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "budget_ppl": 55,
+      "uniform_bytes": 45121536.0,
+      "mixed_bytes": 37158912.0,
+      "saving_pct": 17.647058823529417,
+      "mixed_alloc": {
+        "attn_qkv": 4,
+        "attn_proj": 3,
+        "mlp_fc": 3,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "budget_ppl": 62,
+      "uniform_bytes": 45121536.0,
+      "mixed_bytes": 36274176.0,
+      "saving_pct": 19.6078431372549,
+      "mixed_alloc": {
+        "attn_qkv": 3,
+        "attn_proj": 5,
+        "mlp_fc": 3,
+        "mlp_proj": 3
+      }
+    },
+    {
+      "budget_ppl": 68,
+      "uniform_bytes": 34504704.0,
+      "mixed_bytes": 34504704.0,
+      "saving_pct": 0.0,
+      "mixed_alloc": {
+        "attn_qkv": 3,
+        "attn_proj": 3,
+        "mlp_fc": 3,
+        "mlp_proj": 3
+      }
+    }
+  ],
+  "best": {
+    "budget_ppl": 62,
+    "uniform_bytes": 45121536.0,
+    "mixed_bytes": 36274176.0,
+    "saving_pct": 19.6078431372549,
+    "mixed_alloc": {
+      "attn_qkv": 3,
+      "attn_proj": 5,
+      "mlp_fc": 3,
+      "mlp_proj": 3
+    }
+  },
+  "dominates_int4": false
+}

@@ -19,6 +19,32 @@ The final deliverable is an ISA design document scoring five candidate instructi
 
 This is not novel research and does not claim to be. Bit-serial arithmetic with runtime precision, roofline modeling, mixed-precision allocation, and activation-outlier handling are all established work. What is uncommon here is the join: carrying one measurement across the seam from model sensitivity to hardware cost to instruction design, in a single artifact. No new quantization method, no claimed improvement over GPTQ or AWQ, and no wall-clock speedup claimed for anything that was only counted rather than executed.
 
+## Results so far (2026-08-05)
+
+Model track measured on GPT-2 small, WikiText-2, 12-window subset, fp32 baseline perplexity **31.08**. Evaluation is deterministic on CPU — the measured noise floor is exactly 0.0 over repeats, so every difference below is signal.
+
+**Per-role INT4 cost** (one role quantized, everything else fp32):
+
+| role | INT8 | INT4 | INT3 |
+|---|---|---|---|
+| attn_qkv | +0.04% | +3.38% | +19.62% |
+| attn_proj | -0.00% | +0.77% | +4.69% |
+| mlp_fc | +0.11% | +4.83% | +18.76% |
+| mlp_proj | -0.03% | +0.53% | +8.06% |
+| embeddings | +0.84% | **+4007%** | +1376149% |
+
+Embeddings are catastrophic at INT4 because GPT-2 ties the token embedding to the LM head, so quantizing it coarsens the output logit projection rather than a lookup table. They are pinned at INT8 and excluded from the search, matching GPTQ/AWQ practice. All byte figures below are therefore **transformer weights only**.
+
+**Mixed-precision search**, 140 allocations over 4 roles x {2,3,4,5,6,8} bits, Fisher-ordered greedy Pareto:
+
+> **Mixed precision does not dominate uniform INT4.** Zero allocations are strictly cheaper at equal-or-better perplexity. What it does is fill the gap the uniform ladder leaves — INT4 costs +11.2%, INT3 costs +118.8%, and nothing exists in between. For an accuracy target inside that gap, uniform is forced up to INT4 while a mixed allocation meets it for **9.8–19.6% fewer bytes**.
+
+**The caveat that travels with that number:** the 19.6% figure sits at perplexity 62 against an fp32 baseline of 31 — roughly twice as bad as fp32, which nobody deploys. The saving is largest where accuracy is worst and **zero at the tightest budget**. At deployable accuracy, this measurement shows role-granularity mixed precision buying nothing on a 124M-parameter model.
+
+The most likely cause of the weak result is that this search runs at *role* granularity and cannot see the depth axis, which is where HAWQ-style methods find most of their gain. Full reasoning, every judgment call, and what would change the conclusion: [`DEFENSE.md`](DEFENSE.md).
+
+**Not yet measured:** the roofline, decode throughput, NEON kernels, and everything in the ISA design document.
+
 ## Status
 
 Sprint runs 2026-08-04 to 2026-08-16. See `DECISIONS.md` for the reasoning behind technical choices and `AGENTS.md` for how AI assistance is scoped in this repo.
