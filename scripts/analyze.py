@@ -33,7 +33,8 @@ all_pts = sorted(((p["bytes"], p["ppl"], p["alloc"]) for p in pareto), key=lambd
 
 print("Uniform allocations on the frontier (the ladder mixed precision has to beat):")
 for b, p, a in uniform_pts:
-    print(f"  INT{a['attn_qkv']}  {b / 1e6:6.2f} MB   ppl {p:10.4f}  ({(p / fp32 - 1) * 100:+.2f}% vs fp32)")
+    delta = (p / fp32 - 1) * 100
+    print(f"  INT{a['attn_qkv']}  {b / 1e6:6.2f} MB   ppl {p:10.4f}  ({delta:+.2f}% vs fp32)")
 
 print("\nMatched-accuracy comparison -- cheapest option meeting each perplexity budget:")
 print(f"{'budget ppl':>11} {'uniform MB':>11} {'mixed MB':>10} {'saving':>9}  mixed allocation")

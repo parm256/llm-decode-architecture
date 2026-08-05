@@ -24,7 +24,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 
 import evaluate as ev  # noqa: E402
 import fisher as fi  # noqa: E402
-from quant import bytes_per_role, quantized, uniform  # noqa: E402
+from quant import bytes_per_role, quantized  # noqa: E402
 from roles import PINNED, SEARCHABLE_ROLES, parameter_counts  # noqa: E402
 
 N_WINDOWS = 12
@@ -58,7 +58,8 @@ def main():
     order = fi.descent_order(scores)
     total = sum(scores.values())
     for r in order:
-        print(f"  {r:<11} predicted dL = {scores[r]:.4e}  ({scores[r] / total * 100:5.1f}% of total)")
+        share = scores[r] / total * 100
+        print(f"  {r:<11} predicted dL = {scores[r]:.4e}  ({share:5.1f}% of total)")
     print(f"  descent order (least sensitive first): {' -> '.join(order)}\n")
 
     cache: dict[tuple, float] = {}
@@ -73,7 +74,8 @@ def main():
     start = {r: 4 for r in SEARCHABLE_ROLES}
     ref_ppl = evaluate_alloc(start)
     ref_bytes = transformer_bytes(counts, start)
-    print(f"uniform INT4 reference: ppl {ref_ppl:.4f} ({(ref_ppl / base - 1) * 100:+.2f}% vs fp32), "
+    ref_delta = (ref_ppl / base - 1) * 100
+    print(f"uniform INT4 reference: ppl {ref_ppl:.4f} ({ref_delta:+.2f}% vs fp32), "
           f"{ref_bytes / 1e6:.2f} MB transformer weights\n")
 
     # Greedy Pareto search over single-bit moves, expanding from the frontier.
@@ -103,7 +105,7 @@ def main():
         # Rebuild the non-dominated set over (bytes, perplexity), both minimized.
         points = []
         for key, ppl in cache.items():
-            alloc = dict(zip(SEARCHABLE_ROLES, key))
+            alloc = dict(zip(SEARCHABLE_ROLES, key, strict=True))
             points.append((transformer_bytes(counts, alloc), ppl, alloc))
         frontier = []
         for b, p, a in points:
@@ -112,8 +114,14 @@ def main():
         print(f"  {len(cache)} evals, frontier size {len(frontier)}")
 
     points = sorted(
-        ((transformer_bytes(counts, dict(zip(SEARCHABLE_ROLES, k))), v, dict(zip(SEARCHABLE_ROLES, k)))
-         for k, v in cache.items()),
+        (
+            (
+                transformer_bytes(counts, dict(zip(SEARCHABLE_ROLES, k, strict=True))),
+                v,
+                dict(zip(SEARCHABLE_ROLES, k, strict=True)),
+            )
+            for k, v in cache.items()
+        ),
         key=lambda t: t[0],
     )
     pareto = []

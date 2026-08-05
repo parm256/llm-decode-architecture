@@ -66,11 +66,19 @@ def quantize_groupwise(
         qmax = 2**bits - 1
         lo = g.amin(dim=1, keepdim=True)
         hi = g.amax(dim=1, keepdim=True)
+
+        # A zero-range group has no scale to speak of. Substituting scale=1 keeps the
+        # arithmetic finite, but it does NOT reproduce the constant: the rounded
+        # zero-point then lands on a grid that need not contain that value (2.5 comes
+        # back as 2.0). A constant group is exactly representable by definition, so
+        # write it back verbatim rather than pushing it through the grid.
+        degenerate = hi == lo
         scale = (hi - lo) / qmax
-        scale = torch.where(scale == 0, torch.ones_like(scale), scale)
+        scale = torch.where(degenerate, torch.ones_like(scale), scale)
         zero = torch.round(-lo / scale)
         q = torch.clamp(torch.round(g / scale) + zero, 0, qmax)
         deq = (q - zero) * scale
+        deq = torch.where(degenerate, lo, deq)
 
     out = deq.reshape(x.shape)
     if pad:
@@ -125,7 +133,9 @@ def quantized(model, bit_map: dict[str, int], group_size: int = 128, symmetric: 
                     p.copy_(saved[name])
 
 
-def bytes_per_role(counts: dict[str, int], bit_map: dict[str, int], group_size: int = 128) -> dict[str, float]:
+def bytes_per_role(
+    counts: dict[str, int], bit_map: dict[str, int], group_size: int = 128
+) -> dict[str, float]:
     """Bytes moved per role under an allocation, including group-scale metadata.
 
     Scale metadata is not free and a mixed-precision claim that ignores it overstates

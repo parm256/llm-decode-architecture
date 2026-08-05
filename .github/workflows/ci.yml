@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install dependencies
+        run: |
+          pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cpu
+          pip install numpy==2.5.1 pytest ruff
+      - name: Lint with ruff
+        run: ruff check .
+      - name: Test with pytest
+        run: python -m pytest tests/ -q

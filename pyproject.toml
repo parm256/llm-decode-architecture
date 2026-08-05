@@ -1,0 +1,35 @@
+[project]
+name = "llm-decode-architecture"
+version = "0.1.0"
+description = "Where decode time goes on a 4-bit quantized LLM, and what instruction would fix it"
+requires-python = ">=3.11"
+
+# Pinned to the versions every number in README.md was measured under. The model track
+# is deterministic on CPU, so a version drift that changes a kernel changes the results.
+dependencies = [
+    "torch==2.13.0",
+    "numpy==2.5.1",
+]
+
+[project.optional-dependencies]
+# Needed to run the evaluation harness and reproduce the measurements. Not needed for
+# the test suite, which is deliberately weight-free and network-free.
+eval = [
+    "transformers==5.14.1",
+    "datasets==5.0.1",
+]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "scripts", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

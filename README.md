@@ -45,6 +45,20 @@ The most likely cause of the weak result is that this search runs at *role* gran
 
 **Not yet measured:** the roofline, decode throughput, NEON kernels, and everything in the ISA design document.
 
+## Reproducing this
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -e ".[eval,dev]"
+
+pytest tests/ -q          # quantizer and role-map properties: no weights, no network
+./scripts/reproduce.sh    # the measurements above, from scratch: downloads GPT-2 + WikiText-2
+```
+
+`reproduce.sh` runs the INT8 correctness oracle first and stops if it fails. That ordering is deliberate — INT8 weight quantization should be near-lossless, so if it is not within ~1% of fp32 perplexity, every number downstream of it is a bug report rather than a result.
+
+Dependency versions in `pyproject.toml` are pinned to the ones every figure above was measured under. Evaluation is deterministic on CPU, so a kernel change between torch releases is a change in the results.
+
 ## Status
 
-Sprint runs 2026-08-04 to 2026-08-16. See `DECISIONS.md` for the reasoning behind technical choices and `AGENTS.md` for how AI assistance is scoped in this repo.
+Sprint runs 2026-08-04 to 2026-08-16. `DECISIONS.md` records the reasoning behind each technical choice; `DEFENSE.md` records every judgment call inside the descent.
