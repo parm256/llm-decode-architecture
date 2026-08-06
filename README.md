@@ -43,7 +43,13 @@ Embeddings are catastrophic at INT4 because GPT-2 ties the token embedding to th
 
 The most likely cause of the weak result is that this search runs at *role* granularity and cannot see the depth axis, which is where HAWQ-style methods find most of their gain. Full reasoning, every judgment call, and what would change the conclusion: [`DEFENSE.md`](DEFENSE.md).
 
-**Not yet measured:** the roofline, decode throughput, NEON kernels, and everything in the ISA design document.
+**Not yet measured:** the roofline, decode throughput, and the NEON kernels.
+
+## The instruction side, so far
+
+The ISA track's measuring instrument exists before its argument does, which is the intended order. `isa/emulator/` is an RV32IM interpreter with a dynamic operation counter that breaks retired instructions down by class — loads, stores, ALU, shifts, bitwise, multiplies, divides, branches, jumps — plus a registration hook for a candidate instruction on the reserved `custom-0` / `custom-1` opcode spaces, and a small assembler. A summation loop over 1..10 returns 55 across 43 counted instructions.
+
+That counter is the whole point: it turns "how many operations does this inner loop cost" from a hand calculation into a measurement. **The design document it feeds — five candidate instructions scored against both tracks, and the winning candidate's inner loop written twice and counted — is not written.** Neither are the two loops. See `isa/README.md` for how to run a program against the emulator.
 
 ## Reproducing this
 

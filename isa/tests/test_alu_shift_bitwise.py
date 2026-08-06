@@ -1,9 +1,12 @@
 """Instruction-level tests for ALU, shift, and bitwise classes (RV32I)."""
 
-from isa.emulator.rv32 import CPU
 from isa.emulator.asm import (
-    enc_r, enc_i, OPC_OP, OPC_OP_IMM,
+    OPC_OP,
+    OPC_OP_IMM,
+    enc_i,
+    enc_r,
 )
+from isa.emulator.rv32 import CPU
 
 
 def run_one(cpu, word, at=0):
@@ -89,7 +92,7 @@ def test_bitwise_ops():
 
 def test_lui_and_auipc():
     cpu = CPU()
-    from isa.emulator.asm import enc_u, OPC_LUI, OPC_AUIPC
+    from isa.emulator.asm import OPC_AUIPC, OPC_LUI, enc_u
     run_one(cpu, enc_u(OPC_LUI, 1, 0x12345000))
     assert cpu.get_reg(1) == 0x12345000
     cpu.pc = 0x1000

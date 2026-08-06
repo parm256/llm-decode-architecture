@@ -18,7 +18,7 @@ Register names accepted: x0-x31, and the standard ABI aliases (zero, ra,
 sp, gp, tp, t0-t6, s0/fp, s1-s11, a0-a7).
 """
 
-from .rv32 import sign_extend, mask32
+from .rv32 import mask32, sign_extend
 
 _ABI_NAMES = {
     "zero": 0, "ra": 1, "sp": 2, "gp": 3, "tp": 4,
@@ -185,7 +185,7 @@ def assemble(source, base_addr=0):
 
     # -- pass 2: encode --
     words = []
-    for lineno, mnemonic, rest, here, nwords in sized:
+    for lineno, mnemonic, rest, here, _nwords in sized:
         try:
             words.extend(_encode_line(mnemonic, rest, here, labels))
         except AssemblerError:

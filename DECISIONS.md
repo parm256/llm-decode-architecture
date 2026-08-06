@@ -65,3 +65,29 @@ GPT-2 ties the token embedding to the LM head — `lm_head.weight` *is* `transfo
 The four transformer roles behave as the literature describes (INT4 costing roughly 0.5–5%), which is also the evidence that the quantizer itself is correct — the INT8 oracle passes at +0.97% uniform and restoration is bit-exact.
 
 **What would make this wrong:** embeddings are 39.4M of ~124M parameters, so pinning them at INT8 puts a floor under total compression that a real deployment might not accept. If the mixed-precision claim ends up dominated by that floor, the honest move is to report the allocation over transformer weights separately from whole-model compression, rather than to quantize the head anyway.
+
+## 2026-08-05 — A zero-range quantization group is written back verbatim, not pushed through the grid
+
+**Chose:** Detect groups where `min == max` and restore the original constant directly, bypassing the scale/zero-point arithmetic.
+**Over:** The previous behaviour, which substituted `scale = 1` purely to avoid dividing by zero and then quantized normally.
+**Because:** substituting a scale keeps the arithmetic finite but does not make it correct. The zero-point is rounded to an integer, so for a constant group the reconstructed grid need not contain the constant — a group of `2.5` came back as `2.0`, an error of half a step on a tensor that is exactly representable by definition. A degenerate group carries no information and no scale; the honest reconstruction is the value itself.
+
+**The measured blast radius is zero, and that is why this is recorded rather than silently patched.** Across every quantizable GPT-2 tensor at `group_size=128`, 0 of 971,238 groups are degenerate, so no published figure in the README moves. The fix is therefore not a correction to any result — it is closing a path that would have produced a wrong number on a different model. Models with pruned or masked weight blocks would hit it immediately.
+
+**This would be wrong if** a future caller wanted degenerate groups to round to the grid for bit-exact agreement with some hardware unpacker that has no special case. That is a hardware-matching requirement, not an accuracy one, and it should be a flag rather than a change here.
+
+## 2026-08-05 — The INT8 oracle exits non-zero instead of only reporting
+
+**Chose:** `scripts/oracle.py` terminates with a non-zero status when INT8 is not within 1% of fp32, or when weights do not restore bit-exactly.
+**Over:** Printing `PASS` / `FAIL` and always exiting 0, which is what it did.
+**Because:** `scripts/reproduce.sh` runs under `set -e` and the oracle is deliberately its first stage, so that a broken quantizer stops the pipeline before it produces plausible-looking numbers. That gate did not exist: the script printed `FAIL` and carried straight on into the descent. A correctness check that cannot fail the build is documentation, not a check — and this repo's whole claim is that every number is defensible, which requires the guard to be real.
+
+## 2026-08-05 — The ISA emulator is stdlib Python, and candidate instructions register rather than edit the decoder
+
+**Chose:** Write `isa/emulator/` as dependency-free Python 3, and expose a registration hook so a candidate instruction is added by supplying an opcode match plus a semantics callback on the reserved `custom-0` (0x0B) / `custom-1` (0x2B) opcode spaces.
+**Over:** Rust, which the repo already uses for the kernel track and which would run far faster; and adding candidate instructions by editing the core decode switch.
+**Because:** what this emulator produces is an **operation count**, not a wall-clock time, so interpreter speed is irrelevant — the loops being counted are tens of thousands of instructions, not billions. Python keeps it in one toolchain with the tests and CI that already exist, and keeps the instrument small enough to audit. Nothing about a counted result would change if it were rewritten in Rust, which is the test for whether the language choice matters here.
+
+The registration hook exists because the design document scores **five** candidates. If each one required a decoder edit, comparing them would mean five branches or five mutations of shared code, and a bug in the decoder would silently contaminate every candidate's count. Using the opcode spaces RISC-V explicitly reserves for non-standard extensions also keeps every candidate encodable without colliding with the base ISA.
+
+**This would be wrong if** the emulator were ever asked for cycle-accurate timing or had to execute a full model's inference. Both are different instruments, and neither is what the design document consumes.

@@ -415,7 +415,10 @@ class CPU:
                 self.halted = True  # ECALL (0) or EBREAK (1): both halt
                 category = "OTHER"
             else:
-                self._trap(instr, f"unimplemented SYSTEM instruction (funct3={funct3}, imm12={imm12:#05x})")
+                self._trap(
+                    instr,
+                    f"unimplemented SYSTEM instruction (funct3={funct3}, imm12={imm12:#05x})",
+                )
 
         else:
             self._trap(instr, f"unimplemented opcode {opcode:#04x}")
