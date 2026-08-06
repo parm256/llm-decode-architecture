@@ -26,3 +26,8 @@ venv/
 
 # macOS
 .DS_Store
+
+# Local working notes, not part of the published project
+AGENTS.md
+CLAUDE.md
+JOURNAL.md

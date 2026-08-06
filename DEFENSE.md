@@ -1,6 +1,6 @@
 # Defense brief — the precision descent
 
-**Why this file exists.** `AGENTS.md` originally reserved the descent's accept/reject calls to the human. That was amended on 2026-08-05 so the assistant could run it end to end, and this file is the condition attached to that amendment: every judgment call the assistant made, with its reasoning, so the result can be defended by someone who did not make it. If a choice below cannot be justified, it should not have been made.
+**Why this file exists.** The mixed-precision schedule is this project's headline claim, and a headline claim has to survive questioning. The descent that produces it is a search with judgment calls inside it — a tolerance, a stopping rule, a set of accept/reject decisions on individual bit moves. Reporting only the winning allocation would hide all of them. So every judgment call is written down here with its reasoning, along with what would change the answer. If a choice below cannot be justified, it should not have been made.
 
 Read this before describing the result to anyone.
 
