@@ -91,3 +91,15 @@ The four transformer roles behave as the literature describes (INT4 costing roug
 The registration hook exists because the design document scores **five** candidates. If each one required a decoder edit, comparing them would mean five branches or five mutations of shared code, and a bug in the decoder would silently contaminate every candidate's count. Using the opcode spaces RISC-V explicitly reserves for non-standard extensions also keeps every candidate encodable without colliding with the base ISA.
 
 **This would be wrong if** the emulator were ever asked for cycle-accurate timing or had to execute a full model's inference. Both are different instruments, and neither is what the design document consumes.
+
+## 2026-08-06 — The INT4 workload's reference implementation belongs to the harness, not to either loop
+
+**Chose:** `isa/workload.py` owns the packing layout, the test data, and the reference dot product that says what a correct answer is. `isa/harness.py` runs a loop against it, fails loudly on a wrong answer, and only then reports counts.
+**Over:** Letting each inner loop carry its own expected value, or checking the two loops against each other.
+**Because:** checking the loops against each other is circular — two loops that unpack the nibbles the same wrong way agree perfectly, and the comparison is between two implementations of a misunderstanding. An uncounted wrong loop is worse than no measurement at all, because it produces a number that looks like evidence. This is the same seam `AGENTS.md` already draws for the NEON kernels, where the reference scalar implementation each kernel is checked against is explicitly not the kernel author's.
+
+**The harness is tested against a loop that is wrong**, not only against loops that work. A checker that has only ever seen correct input has not been shown to detect anything.
+
+**Two things are deliberately outside the measured loop**, and both would flatter a comparison if included. The **dequantization scale** is one multiply per row, not per element, so it would pad every candidate by the same constant and shrink the difference the comparison exists to show. **Loop setup** is *not* subtracted, which is the opposite choice for the opposite reason: subtracting it invites quoting a steady-state number that no real caller experiences. `sweep()` runs several sizes so setup is visible as the thing that shrinks with `n`.
+
+**This would be wrong if** a candidate instruction changed the packing layout it wants — then the layout is no longer a fixed property of the workload but part of what is being compared, and `Workload` needs to carry the layout as a variant with a per-layout reference unpack. The layout is already a parameter for that reason; nothing else in the harness would change.
